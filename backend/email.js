@@ -2,15 +2,23 @@ import nodemailer from 'nodemailer';
 import { randomBytes } from 'crypto';
 import db from './database.js';
 
+const EMAIL_USER = 'mwanzidevis01@gmail.com';
+const EMAIL_PASS = 'davi1#2#3#';
+
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   port: 465,
   secure: true,
   auth: {
-    user: 'mwanzidevis01@gmail.com',
-    pass: 'davi1#2#3#',
+    user: EMAIL_USER,
+    pass: EMAIL_PASS,
   },
 });
+
+// Verify connection on startup
+transporter.verify()
+  .then(() => console.log('✅ SMTP connection verified'))
+  .catch(err => console.error('❌ SMTP connection failed:', err.message, '\n💡 Use Gmail App Password if 2FA is enabled: https://myaccount.google.com/apppasswords'));
 
 export function generateResetToken() {
   return randomBytes(32).toString('hex');
@@ -42,7 +50,16 @@ export async function sendResetEmail(email, token) {
     `,
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('📧 Reset email sent:', info.messageId, 'to:', email);
+    return info;
+  } catch (err) {
+    console.error('❌ Failed to send reset email:', err.message);
+    console.error('   Error code:', err.code);
+    console.error('   Response:', err.response);
+    throw err;
+  }
 }
 
 export function storeResetToken(email, token) {
