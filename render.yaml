@@ -2,7 +2,6 @@ services:
   - type: web
     name: efootball-community-api
     env: node
-    region: oregon
     plan: free
     buildCommand: cd backend && npm install
     startCommand: cd backend && node index.js
