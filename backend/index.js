@@ -6,6 +6,7 @@ import usersRouter from './routes/users.js';
 import tournamentsRouter from './routes/tournaments.js';
 import leaderboardRouter from './routes/leaderboard.js';
 import postsRouter from './routes/posts.js';
+import passwordRouter from './routes/password.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -19,6 +20,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/tournaments', tournamentsRouter);
 app.use('/api/leaderboard', leaderboardRouter);
 app.use('/api/posts', postsRouter);
+app.use('/api/password', passwordRouter);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

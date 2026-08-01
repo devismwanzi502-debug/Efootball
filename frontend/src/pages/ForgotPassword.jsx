@@ -1,23 +1,23 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useAuth } from '../context/AuthContext';
+import { api } from '../api/index';
 
-export default function Login() {
+export default function ForgotPassword() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setMessage('');
     setLoading(true);
     try {
-      await login(email, password);
-      navigate('/');
+      await api.forgotPassword(email);
+      setMessage('If the email exists, a reset link has been sent');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -34,12 +34,13 @@ export default function Login() {
         transition={{ duration: 0.5 }}
       >
         <motion.div className="auth-icon" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}>
-          ⚽
+          🔐
         </motion.div>
-        <h2>Welcome Back</h2>
-        <p className="auth-subtitle">Sign in to your eFootball Hub account</p>
+        <h2>Forgot Password</h2>
+        <p className="auth-subtitle">Enter your email and we'll send you a reset link</p>
         
         {error && <motion.div className="alert alert-error" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>{error}</motion.div>}
+        {message && <motion.div className="alert alert-success" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>{message}</motion.div>}
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -53,32 +54,18 @@ export default function Login() {
               autoComplete="email"
             />
           </div>
-          <div className="form-group">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <label>Password</label>
-              <Link to="/forgot-password" className="forgot-link">Forgot?</Link>
-            </div>
-            <input 
-              type="password" 
-              value={password} 
-              onChange={e => setPassword(e.target.value)} 
-              required 
-              placeholder="••••••••"
-              autoComplete="current-password"
-            />
-          </div>
           <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
             {loading ? (
               <>
                 <motion.div className="spinner" animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity }} />
-                Logging in...
+                Sending...
               </>
-            ) : 'Login'}
+            ) : 'Send Reset Link'}
           </button>
         </form>
         
         <p className="auth-switch">
-          Don't have an account? <Link to="/register">Register</Link>
+          <Link to="/login">← Back to Login</Link>
         </p>
       </motion.div>
     </div>

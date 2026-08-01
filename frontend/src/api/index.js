@@ -26,6 +26,9 @@ export const api = {
   updateMe: (body) => request('/api/users/me', { method: 'PUT', body: JSON.stringify(body) }),
   getProfile: (id) => request(`/api/users/profile/${id}`),
 
+  forgotPassword: (email) => request('/api/password/forgot-password', { method: 'POST', body: JSON.stringify({ email }) }),
+  resetPassword: (token, password) => request('/api/password/reset-password', { method: 'POST', body: JSON.stringify({ token, password }) }),
+
   getTournaments: (params) => {
     const q = new URLSearchParams(params).toString();
     return request(`/api/tournaments${q ? '?' + q : ''}`);
