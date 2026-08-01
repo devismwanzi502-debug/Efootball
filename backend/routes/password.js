@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { hashPassword } from './auth.js';
-import { generateResetToken, sendResetEmail, storeResetToken, verifyResetToken, deleteResetToken } from './email.js';
-import db from './database.js';
+import { hashPassword } from '../auth.js';
+import { generateResetToken, sendResetEmail, storeResetToken, verifyResetToken, deleteResetToken } from '../email.js';
+import db from '../database.js';
 
 const router = Router();
 
