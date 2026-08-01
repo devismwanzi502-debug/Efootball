@@ -3,6 +3,9 @@ node_modules/
 .env
 *.log
 efootball.db
+efootball.db-*
+efootball.db-shm
+efootball.db-wal
 
 # Frontend
 node_modules/
