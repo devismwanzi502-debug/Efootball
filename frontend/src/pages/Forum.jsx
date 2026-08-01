@@ -73,7 +73,7 @@ export default function Forum() {
                 </Link>
               </CardMotion>
             ))}
-          </div>
+          </Stagger>
           {totalPages > 1 && (
             <div className="pagination">
               <button disabled={page <= 1} onClick={() => setPage(page - 1)} className="btn btn-sm">Prev</button>
