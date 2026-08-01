@@ -17,7 +17,8 @@ export default function ForgotPassword() {
     setLoading(true);
     try {
       await api.forgotPassword(email);
-      setMessage('If the email exists, a reset link has been sent');
+      setMessage('If the email exists, a reset code has been sent');
+      setTimeout(() => navigate(`/reset-password?email=${encodeURIComponent(email)}`), 1500);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -37,7 +38,7 @@ export default function ForgotPassword() {
           🔐
         </motion.div>
         <h2>Forgot Password</h2>
-        <p className="auth-subtitle">Enter your email and we'll send you a reset link</p>
+        <p className="auth-subtitle">Enter your email and we'll send you a 6-digit code</p>
         
         {error && <motion.div className="alert alert-error" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>{error}</motion.div>}
         {message && <motion.div className="alert alert-success" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>{message}</motion.div>}
@@ -60,7 +61,7 @@ export default function ForgotPassword() {
                 <motion.div className="spinner" animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity }} />
                 Sending...
               </>
-            ) : 'Send Reset Link'}
+            ) : 'Send Reset Code'}
           </button>
         </form>
         

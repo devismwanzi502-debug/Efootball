@@ -6,27 +6,29 @@ import { api } from '../api/index';
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const token = searchParams.get('token');
+  const emailParam = searchParams.get('email');
   
+  const [email, setEmail] = useState(emailParam || '');
+  const [code, setCode] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [validToken, setValidToken] = useState(true);
-
-  useEffect(() => {
-    if (!token) {
-      setValidToken(false);
-      setError('Invalid or missing reset token');
-    }
-  }, [token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setMessage('');
     
+    if (!email || !code || !password) {
+      setError('All fields are required');
+      return;
+    }
+    if (code.length !== 6) {
+      setError('Code must be 6 digits');
+      return;
+    }
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
@@ -38,7 +40,7 @@ export default function ResetPassword() {
     
     setLoading(true);
     try {
-      await api.resetPassword(token, password);
+      await api.resetPassword(email, code, password);
       setMessage('Password has been reset successfully! Redirecting to login...');
       setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
@@ -48,23 +50,10 @@ export default function ResetPassword() {
     }
   };
 
-  if (!validToken) {
-    return (
-      <div className="auth-page">
-        <motion.div
-          className="auth-card"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <motion.div className="auth-icon" animate={{ scale: [1, 0.8, 1] }} transition={{ duration: 2, repeat: Infinity }}>⚠️</motion.div>
-          <h2>Invalid Link</h2>
-          <p className="auth-subtitle">This reset link is invalid or has expired</p>
-          <div className="alert alert-error">{error}</div>
-          <Link to="/forgot-password" className="btn btn-primary btn-full">Request New Link</Link>
-        </motion.div>
-      </div>
-    );
-  }
+  const handleCodeChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+    setCode(value);
+  };
 
   return (
     <div className="auth-page">
@@ -75,15 +64,39 @@ export default function ResetPassword() {
         transition={{ duration: 0.5 }}
       >
         <motion.div className="auth-icon" initial={{ rotate: -90 }} animate={{ rotate: 0 }} transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}>
-          🔑
+          🔢
         </motion.div>
-        <h2>Reset Password</h2>
-        <p className="auth-subtitle">Enter your new password below</p>
+        <h2>Enter Reset Code</h2>
+        <p className="auth-subtitle">Check your email for the 6-digit code</p>
         
         {error && <motion.div className="alert alert-error" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>{error}</motion.div>}
         {message && <motion.div className="alert alert-success" initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>{message}</motion.div>}
         
         <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Email</label>
+            <input 
+              type="email" 
+              value={email} 
+              onChange={e => setEmail(e.target.value)} 
+              required 
+              placeholder="your@email.com"
+              autoComplete="email"
+            />
+          </div>
+          <div className="form-group">
+            <label>6-Digit Code</label>
+            <input 
+              type="text" 
+              value={code} 
+              onChange={handleCodeChange} 
+              required 
+              placeholder="000000"
+              maxLength={6}
+              style={{ fontSize: '1.5rem', letterSpacing: '0.5rem', textAlign: 'center', fontFamily: 'monospace' }}
+              autoComplete="one-time-code"
+            />
+          </div>
           <div className="form-group">
             <label>New Password</label>
             <input 
@@ -118,7 +131,10 @@ export default function ResetPassword() {
         </form>
         
         <p className="auth-switch">
-          <Link to="/login">← Back to Login</Link>
+          <Link to="/forgot-password">← Resend Code</Link>
+        </p>
+        <p className="auth-switch" style={{ marginTop: '8px' }}>
+          <Link to="/login">Back to Login</Link>
         </p>
       </motion.div>
     </div>
