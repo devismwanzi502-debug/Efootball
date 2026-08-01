@@ -3,7 +3,7 @@ import { randomBytes } from 'crypto';
 import db from './database.js';
 
 const EMAIL_USER = 'mwanzidevis01@gmail.com';
-const EMAIL_PASS = 'davi1#2#3#';
+const EMAIL_PASS = 'zrpchutldgdaeuj';
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
