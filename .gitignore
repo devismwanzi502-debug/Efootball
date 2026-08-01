@@ -1,0 +1,12 @@
+# Backend
+node_modules/
+.env
+*.log
+efootball.db
+
+# Frontend
+node_modules/
+dist/
+.env
+.env.local
+*.log
